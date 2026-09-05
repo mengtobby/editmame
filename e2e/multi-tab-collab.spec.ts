@@ -21,9 +21,9 @@ test("two peers in the same room connect to each other over WebRTC", async ({ br
   await expect(pageB.getByText("LoomP2P")).toBeVisible();
 
   await expect(pageA.getByTestId("connection-status")).toHaveText("Connected", { timeout: 15_000 });
-  await expect(pageA.getByTestId("peer-count")).toContainText("1 peer", { timeout: 15_000 });
+  await expect(pageA.getByTestId("peer-avatar")).toHaveCount(2, { timeout: 15_000 }); // you + the other peer
   await expect(pageB.getByTestId("connection-status")).toHaveText("Connected", { timeout: 15_000 });
-  await expect(pageB.getByTestId("peer-count")).toContainText("1 peer", { timeout: 15_000 });
+  await expect(pageB.getByTestId("peer-avatar")).toHaveCount(2, { timeout: 15_000 });
 
   // Each side's network panel should list the *other* peer, not itself twice.
   const peerIdA = await pageA.locator("aside").getByText(/^[0-9a-f]{6}$/).last().innerText();
@@ -46,8 +46,8 @@ test("adding a track in one tab syncs to the other via the CRDT", async ({ brows
 
   // "Connected" alone only means the signaling socket is open; wait for an actual peer too,
   // otherwise a CRDT update sent before the data channel exists would never arrive.
-  await expect(pageA.getByTestId("peer-count")).toContainText("1 peer", { timeout: 15_000 });
-  await expect(pageB.getByTestId("peer-count")).toContainText("1 peer", { timeout: 15_000 });
+  await expect(pageA.getByTestId("peer-avatar")).toHaveCount(2, { timeout: 15_000 });
+  await expect(pageB.getByTestId("peer-avatar")).toHaveCount(2, { timeout: 15_000 });
 
   await pageA.getByRole("button", { name: "+ Video Track" }).click();
   await expect(pageA.getByText("V1", { exact: true })).toBeVisible();

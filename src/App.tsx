@@ -47,7 +47,10 @@ function App() {
     <div className="flex h-screen w-screen flex-col overflow-hidden bg-surface-950 text-neutral-100">
       <TopBar
         roomId={room.roomId}
-        peerCount={room.connectedPeerIds.length}
+        peerId={room.peerId}
+        projectName={room.meta.name}
+        onRenameProject={(name) => room.engine.updateMeta({ name })}
+        peers={topology.peers}
         signalingState={room.signalingState}
         onNewRoom={room.regenerateRoom}
       />

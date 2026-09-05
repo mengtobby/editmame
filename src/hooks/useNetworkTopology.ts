@@ -7,7 +7,7 @@ const SAMPLE_INTERVAL_MS = 1000;
 const MAX_EXCHANGE_LOG = 30;
 const PEER_COLORS = ["#f97316", "#22d3ee", "#a78bfa", "#4ade80", "#f472b6", "#facc15"];
 
-function colorFor(peerId: string): string {
+export function colorFor(peerId: string): string {
   let hash = 0;
   for (let i = 0; i < peerId.length; i += 1) hash = (hash * 31 + peerId.charCodeAt(i)) >>> 0;
   return PEER_COLORS[hash % PEER_COLORS.length]!;
