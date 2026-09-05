@@ -1,4 +1,4 @@
-# LoomP2P
+# Editmame
 
 A local-first, peer-to-peer collaborative non-linear video editor. Multiple people join a shared
 editing session over WebRTC, import local media without uploading it anywhere, edit a multi-track
