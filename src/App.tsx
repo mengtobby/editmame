@@ -62,7 +62,7 @@ function App() {
             <PreviewCanvas playback={playback} meta={room.meta} durationUs={durationUs} onStepFrame={handleStepFrame} />
           </div>
 
-          <div className="flex items-center gap-1 border-b border-gray-200 bg-white px-3 py-1.5">
+          <div className="flex items-center gap-1 overflow-x-auto whitespace-nowrap border-b border-gray-200 bg-white px-3 py-1.5 scrollbar-thin">
             <ImportButton
               engine={room.engine}
               chunkStore={room.chunkStore}

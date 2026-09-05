@@ -13,7 +13,7 @@ function formatBytesPerSec(bytes: number): string {
 
 export function NetworkPanel({ peers, throughput, recentExchanges, selfPeerId }: NetworkPanelProps) {
   return (
-    <aside className="flex h-full w-72 shrink-0 flex-col border-l border-gray-200 bg-white">
+    <aside className="hidden h-full w-72 shrink-0 flex-col border-l border-gray-200 bg-white lg:flex">
       <div className="border-b border-gray-200 px-4 py-3">
         <h2 className="text-sm font-medium text-gray-900">People</h2>
         <p className="mt-0.5 text-xs leading-relaxed text-gray-500">

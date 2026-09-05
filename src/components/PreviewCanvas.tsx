@@ -93,10 +93,19 @@ function IconButton({ children, onClick, label }: { children: React.ReactNode; o
 }
 
 function StepIcon({ direction }: { direction: "back" | "forward" }) {
-  const flip = direction === "back" ? "scale-x-[-1]" : "";
   return (
-    <svg className={`h-3.5 w-3.5 ${flip}`} viewBox="0 0 16 16" fill="currentColor">
-      <path d="M3 3h1.5v10H3V3zm3 5 8-5v10l-8-5z" />
+    <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor">
+      {direction === "forward" ? (
+        <>
+          <path d="M2 3v10l8-5-8-5Z" />
+          <rect x="11.5" y="3" width="1.5" height="10" />
+        </>
+      ) : (
+        <>
+          <rect x="3" y="3" width="1.5" height="10" />
+          <path d="M14 3v10l-8-5 8-5Z" />
+        </>
+      )}
     </svg>
   );
 }
