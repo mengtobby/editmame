@@ -31,7 +31,7 @@ export interface Bitfield {
   assetHash: Blake3Hex;
   chunkCount: number;
   /** One bit per chunk, ceil(chunkCount / 8) bytes, bit i = chunk i present. */
-  bits: Uint8Array;
+  bits: Uint8Array<ArrayBuffer>;
 }
 
 // ---------------------------------------------------------------------------
@@ -78,7 +78,7 @@ export interface HandshakeMessage {
 export interface BitfieldUpdateMessage {
   type: SwarmMessageType.BitfieldUpdate;
   assetHash: Blake3Hex;
-  bits: Uint8Array;
+  bits: Uint8Array<ArrayBuffer>;
 }
 
 /** Incremental announcement that a single chunk just became available locally. */
@@ -103,7 +103,7 @@ export interface ChunkMessage {
   assetHash: Blake3Hex;
   chunkIndex: number;
   requestId: string;
-  data: Uint8Array;
+  data: Uint8Array<ArrayBuffer>;
   /** BLAKE3 of `data`; the receiver re-verifies this against the asset's manifest before
    *  writing to OPFS, independent of transport integrity. */
   hash: Blake3Hex;
