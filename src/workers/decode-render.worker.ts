@@ -2,7 +2,7 @@ import { createFile, DataStream, type ArrayBufferWithFileStart, type MP4File } f
 import { selectFrameForTime, type TimedFrame } from "@/playback/frame-selector";
 import { PlaybackClock } from "@/playback/playback-clock";
 import { WebGLCompositor, type CompositeLayer } from "@/playback/webgl-compositor";
-import type { MainToWorkerMessage, RenderableClip, WorkerToMainMessage } from "./worker-messages";
+import { mapToSourceTimeUs, type MainToWorkerMessage, type RenderableClip, type WorkerToMainMessage } from "./worker-messages";
 
 declare const self: DedicatedWorkerGlobalScope;
 
@@ -121,7 +121,8 @@ function renderTick(): void {
     const source = sources.get(clip.assetHash);
     if (!source) continue;
 
-    const { frame, dropped } = selectFrameForTime(source.frameQueue, mediaTimeUs);
+    const sourceTimeUs = mapToSourceTimeUs(clip, mediaTimeUs);
+    const { frame, dropped } = selectFrameForTime(source.frameQueue, sourceTimeUs);
     for (const stale of dropped) stale.close();
 
     if (frame) {

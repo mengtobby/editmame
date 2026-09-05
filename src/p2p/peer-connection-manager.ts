@@ -36,6 +36,13 @@ export interface PeerConnectionManagerEvents {
   "peer-connected": { peerId: string };
   "peer-disconnected": { peerId: string };
   message: { peerId: string; data: string | ArrayBuffer };
+  "bytes-sent": { peerId: string; bytes: number };
+  "bytes-received": { peerId: string; bytes: number };
+}
+
+function byteLengthOf(data: string | ArrayBufferView | ArrayBuffer): number {
+  if (typeof data === "string") return new TextEncoder().encode(data).length;
+  return "byteLength" in data ? data.byteLength : 0;
 }
 
 export interface PeerConnectionManagerOptions {
@@ -139,6 +146,7 @@ export class PeerConnectionManager {
     const channel = this.peers.get(peerId)?.dataChannel;
     if (channel?.readyState === "open") {
       channel.send(data as never);
+      this.emitter.emit("bytes-sent", { peerId, bytes: byteLengthOf(data) });
     }
   }
 
@@ -278,7 +286,9 @@ export class PeerConnectionManager {
     channel.addEventListener("open", () => this.emitter.emit("peer-connected", { peerId: handle.peerId }));
     channel.addEventListener("close", () => this.emitter.emit("peer-disconnected", { peerId: handle.peerId }));
     channel.addEventListener("message", (event) => {
-      this.emitter.emit("message", { peerId: handle.peerId, data: (event as MessageEvent).data });
+      const data = (event as MessageEvent).data;
+      this.emitter.emit("message", { peerId: handle.peerId, data });
+      this.emitter.emit("bytes-received", { peerId: handle.peerId, bytes: byteLengthOf(data) });
     });
   }
 

@@ -6,6 +6,17 @@ export interface RenderableClip {
   zIndex: number;
   opacity: number;
   transform: ClipTransform;
+  /** Trim in-point within the source asset, microseconds — see mapToSourceTimeUs. */
+  inPointUs: number;
+  /** Where this clip starts on the project timeline, microseconds — see mapToSourceTimeUs. */
+  startOnTimelineUs: number;
+}
+
+/** Converts the project-timeline clock into this clip's source-relative presentation time, so a
+ *  trimmed and/or offset clip decodes and displays the right frame instead of assuming every
+ *  clip starts at project time 0 with no trim. */
+export function mapToSourceTimeUs(clip: Pick<RenderableClip, "inPointUs" | "startOnTimelineUs">, projectMediaTimeUs: number): number {
+  return clip.inPointUs + (projectMediaTimeUs - clip.startOnTimelineUs);
 }
 
 export type MainToWorkerMessage =
