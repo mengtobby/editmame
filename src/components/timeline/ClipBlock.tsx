@@ -1,14 +1,20 @@
-import type { ClipRecord, TimelineEngine } from "@/types/timeline";
+import type { ClipRecord, TimelineEngine, TrackKind } from "@/types/timeline";
 import { MIN_CLIP_DURATION_US, pixelsToUs, usToPixels } from "./constants";
 
 interface ClipBlockProps {
   clip: ClipRecord;
+  trackKind: TrackKind;
   engine: TimelineEngine;
   isSelected: boolean;
   onSelect: () => void;
 }
 
-export function ClipBlock({ clip, engine, isSelected, onSelect }: ClipBlockProps) {
+const CLIP_COLOR: Record<TrackKind, string> = {
+  video: "bg-clip-video",
+  audio: "bg-clip-audio",
+};
+
+export function ClipBlock({ clip, trackKind, engine, isSelected, onSelect }: ClipBlockProps) {
   const left = usToPixels(clip.startOnTimelineUs);
   const width = Math.max(6, usToPixels(clip.durationUs));
 
@@ -76,21 +82,21 @@ export function ClipBlock({ clip, engine, isSelected, onSelect }: ClipBlockProps
   return (
     <div
       onPointerDown={handleMovePointerDown}
-      className={`absolute bottom-1 top-1 select-none overflow-hidden rounded-md border bg-gradient-to-b from-indigo-500/85 to-indigo-700/85 shadow-sm active:cursor-grabbing ${
-        isSelected ? "border-accent-300 ring-1 ring-accent-300" : "border-black/40"
+      className={`absolute bottom-1 top-1 select-none overflow-hidden rounded ${CLIP_COLOR[trackKind]} shadow-sm active:cursor-grabbing ${
+        isSelected ? "ring-2 ring-accent-500 ring-offset-1" : ""
       }`}
       style={{ left, width, cursor: "grab" }}
     >
-      <div className="pointer-events-none truncate px-2 py-1 text-[11px] font-medium text-white/90">
+      <div className="pointer-events-none truncate px-2 py-1.5 text-[11px] font-medium text-white">
         {clip.label ?? clip.assetHash.slice(0, 8)}
       </div>
       <div
         onPointerDown={handleTrimPointerDown("left")}
-        className="absolute inset-y-0 left-0 w-1.5 cursor-ew-resize hover:bg-white/30"
+        className="absolute inset-y-0 left-0 w-1.5 cursor-ew-resize hover:bg-white/40"
       />
       <div
         onPointerDown={handleTrimPointerDown("right")}
-        className="absolute inset-y-0 right-0 w-1.5 cursor-ew-resize hover:bg-white/30"
+        className="absolute inset-y-0 right-0 w-1.5 cursor-ew-resize hover:bg-white/40"
       />
     </div>
   );

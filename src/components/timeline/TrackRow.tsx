@@ -29,19 +29,19 @@ export function TrackRow({ track, index, allTracks, engine, selectedClipId, onSe
   };
 
   return (
-    <div className="flex border-b border-neutral-800">
+    <div className="flex border-b border-gray-100">
       <div
-        className="flex shrink-0 flex-col justify-center gap-1 border-r border-neutral-800 bg-surface-900 px-2.5"
+        className="group flex shrink-0 flex-col justify-center gap-1.5 border-r border-gray-200 bg-white px-3"
         style={{ width: TRACK_HEADER_WIDTH, height: TRACK_HEIGHT }}
       >
         <div className="flex items-center justify-between">
-          <span className="truncate text-xs font-medium text-neutral-300">{track.name}</span>
-          <div className="flex gap-0.5">
+          <span className="truncate text-xs font-medium text-gray-700">{track.name}</span>
+          <div className="flex gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
             <button
               type="button"
               onClick={moveUp}
               disabled={isFirst}
-              className="rounded px-1 text-[10px] text-neutral-500 hover:bg-neutral-800 hover:text-neutral-200 disabled:opacity-30"
+              className="rounded px-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-700 disabled:opacity-0"
               aria-label="Move track up"
             >
               ▲
@@ -50,7 +50,7 @@ export function TrackRow({ track, index, allTracks, engine, selectedClipId, onSe
               type="button"
               onClick={moveDown}
               disabled={isLast}
-              className="rounded px-1 text-[10px] text-neutral-500 hover:bg-neutral-800 hover:text-neutral-200 disabled:opacity-30"
+              className="rounded px-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-700 disabled:opacity-0"
               aria-label="Move track down"
             >
               ▼
@@ -64,11 +64,12 @@ export function TrackRow({ track, index, allTracks, engine, selectedClipId, onSe
         </div>
       </div>
 
-      <div className="relative shrink-0 bg-surface-950" style={{ width: widthPx, height: TRACK_HEIGHT }}>
+      <div className="relative shrink-0 bg-white" style={{ width: widthPx, height: TRACK_HEIGHT }}>
         {track.clips.map((clip) => (
           <ClipBlock
             key={clip.id}
             clip={clip}
+            trackKind={track.kind}
             engine={engine}
             isSelected={selectedClipId === clip.id}
             onSelect={() => onSelectClip(clip.id)}
@@ -84,8 +85,8 @@ function TrackToggle({ label, active, onClick }: { label: string; active: boolea
     <button
       type="button"
       onClick={onClick}
-      className={`h-4 w-4 rounded text-[9px] font-semibold leading-4 ${
-        active ? "bg-accent-600 text-white" : "bg-neutral-800 text-neutral-500 hover:text-neutral-300"
+      className={`h-4 w-4 rounded text-[9px] font-semibold leading-4 transition-colors ${
+        active ? "bg-accent-500 text-white" : "bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-600"
       }`}
     >
       {label}
