@@ -3,21 +3,38 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 body {
   overscroll-behavior: none;
+  font-feature-settings: "tnum" 1;
 }
 
-/* Thin scrollbars for timeline/track panels */
+::selection {
+  background-color: theme("colors.accent.100");
+  color: theme("colors.accent.700");
+}
+
+:focus-visible {
+  outline: 2px solid theme("colors.accent.500");
+  outline-offset: 2px;
+}
+
+/* Thin, light scrollbars for timeline/track panels */
 .scrollbar-thin::-webkit-scrollbar {
-  height: 8px;
-  width: 8px;
+  height: 10px;
+  width: 10px;
 }
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background-color: rgb(63 63 70);
+  background-color: theme("colors.gray.300");
   border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background-color: theme("colors.gray.400");
+  background-clip: content-box;
 }
 .scrollbar-thin::-webkit-scrollbar-track {
   background-color: transparent;

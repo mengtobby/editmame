@@ -1,11 +1,34 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
     <title>LoomP2P — Collaborative P2P Video Editor</title>
   </head>
-  <body class="bg-neutral-950 text-neutral-100">
+  <body class="bg-gray-50 text-gray-900">
+    <!--
+      THESIS: replace dense pro-NLE dark chrome with the calm, task-first legibility of a
+      shared document — video editing that feels as approachable as editing a Google Doc together.
+      OWN-WORLD: Google Docs' own visual system — white/light-gray canvas, Roboto, #1a73e8 blue
+      actions, #dadce0 hairline borders, circular peer avatars, icon-toolbar rows, a "page"
+      floating on gray chrome.
+      STORY: a visitor opens a room, sees their name and a collaborator's avatar up top like a
+      shared doc, imports a clip, and watches a collaborator's edit appear live — never doubting
+      where their footage lives.
+      FIRST VIEWPORT: light-gray app shell; white title bar with editable project name, peer
+      avatars, and a blue Share button; white preview "page" card with an icon toolbar beneath;
+      light timeline; white right rail listing peers plainly.
+      FORM: brief-pinned world (Google Docs) — the user named the reference directly, so no
+      concept-seed roll.
+      FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review,
+      the verdict, DESIGN.md, and every shipping raster carrying its provenance.
+    -->
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
