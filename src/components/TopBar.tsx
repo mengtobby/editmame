@@ -31,8 +31,12 @@ export function TopBar({ roomId, peerCount, signalingState, onNewRoom }: TopBarP
         <span className="text-sm font-semibold tracking-tight text-neutral-100">LoomP2P</span>
         <span className="flex items-center gap-1.5 rounded-full border border-neutral-800 bg-surface-950 px-2.5 py-1 text-xs text-neutral-400">
           <span className={`h-1.5 w-1.5 rounded-full ${status.dot}`} />
-          {status.label}
-          {peerCount > 0 && <span className="text-neutral-600">· {peerCount} peer{peerCount === 1 ? "" : "s"}</span>}
+          <span data-testid="connection-status">{status.label}</span>
+          {peerCount > 0 && (
+            <span data-testid="peer-count" className="text-neutral-600">
+              · {peerCount} peer{peerCount === 1 ? "" : "s"}
+            </span>
+          )}
         </span>
       </div>
 

@@ -24,6 +24,10 @@ Thumbs.db
 
 # Test/coverage
 coverage
+test-results
+playwright-report
+blob-report
+playwright/.cache
 
 # TypeScript build info
 *.tsbuildinfo
