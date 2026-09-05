@@ -49,7 +49,12 @@ export function TopBar({ roomId, peerId, projectName, onRenameProject, peers, si
 
   return (
     <header className="flex h-16 shrink-0 items-center gap-3 border-b border-gray-200 bg-white px-4">
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent-500 text-white">
+      <div
+        role="img"
+        aria-label="LoomP2P"
+        title="LoomP2P"
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent-500 text-white"
+      >
         <FilmIcon />
       </div>
 
