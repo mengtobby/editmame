@@ -3,6 +3,7 @@ import { ImportButton } from "@/components/ImportButton";
 import { NetworkPanel } from "@/components/NetworkPanel";
 import { PreviewCanvas } from "@/components/PreviewCanvas";
 import { Timeline } from "@/components/timeline/Timeline";
+import { ToolbarButton } from "@/components/ToolbarButton";
 import { TopBar } from "@/components/TopBar";
 import { useCollabRoom } from "@/hooks/useCollabRoom";
 import { useNetworkTopology } from "@/hooks/useNetworkTopology";
@@ -44,7 +45,7 @@ function App() {
   };
 
   return (
-    <div className="flex h-screen w-screen flex-col overflow-hidden bg-surface-950 text-neutral-100">
+    <div className="flex h-screen w-screen flex-col overflow-hidden bg-gray-50 text-gray-900">
       <TopBar
         roomId={room.roomId}
         peerId={room.peerId}
@@ -61,7 +62,7 @@ function App() {
             <PreviewCanvas playback={playback} meta={room.meta} durationUs={durationUs} onStepFrame={handleStepFrame} />
           </div>
 
-          <div className="flex items-center gap-2 border-b border-t border-neutral-800 bg-surface-900 px-3 py-2">
+          <div className="flex items-center gap-1 border-b border-gray-200 bg-white px-3 py-1.5">
             <ImportButton
               engine={room.engine}
               chunkStore={room.chunkStore}
@@ -69,20 +70,13 @@ function App() {
               tracks={room.tracks}
               playheadUs={playback.currentTimeUs}
             />
-            <button
-              type="button"
-              onClick={() => addTrack("video")}
-              className="rounded-md border border-neutral-800 px-3 py-1.5 text-xs text-neutral-300 hover:bg-neutral-800"
-            >
-              + Video Track
-            </button>
-            <button
-              type="button"
-              onClick={() => addTrack("audio")}
-              className="rounded-md border border-neutral-800 px-3 py-1.5 text-xs text-neutral-300 hover:bg-neutral-800"
-            >
-              + Audio Track
-            </button>
+            <span className="mx-1 h-5 w-px bg-gray-200" />
+            <ToolbarButton onClick={() => addTrack("video")} icon={<VideoTrackIcon />}>
+              Video track
+            </ToolbarButton>
+            <ToolbarButton onClick={() => addTrack("audio")} icon={<AudioTrackIcon />}>
+              Audio track
+            </ToolbarButton>
           </div>
 
           <div className="min-h-0 flex-1">
@@ -106,6 +100,29 @@ function App() {
         />
       </div>
     </div>
+  );
+}
+
+function VideoTrackIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" className="h-4 w-4">
+      <rect x="1.5" y="3.5" width="13" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M6 6l3.5 2L6 10V6Z" fill="currentColor" />
+    </svg>
+  );
+}
+
+function AudioTrackIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" className="h-4 w-4">
+      <path
+        d="M2 8h1.5l1.5-3 2 6 2-8 2 5 1.5-2.5H14"
+        stroke="currentColor"
+        strokeWidth="1.3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
   );
 }
 

@@ -58,11 +58,14 @@ export function ImportButton({ engine, chunkStore, swarm, tracks, playheadUs }: 
 
   return (
     <label
-      className={`cursor-pointer rounded-md border border-neutral-800 px-3 py-1.5 text-xs text-neutral-300 hover:bg-neutral-800 ${
+      className={`flex cursor-pointer items-center gap-1.5 rounded px-2.5 py-1.5 text-sm text-gray-700 transition-colors hover:bg-gray-100 ${
         busy ? "pointer-events-none opacity-50" : ""
       }`}
     >
-      {busy ? "Importing…" : "Import Media"}
+      <span className="text-gray-500">
+        <UploadIcon />
+      </span>
+      {busy ? "Importing…" : "Import media"}
       <input
         ref={inputRef}
         type="file"
@@ -71,5 +74,19 @@ export function ImportButton({ engine, chunkStore, swarm, tracks, playheadUs }: 
         onChange={(event) => void handleFiles(event.target.files)}
       />
     </label>
+  );
+}
+
+function UploadIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" className="h-4 w-4">
+      <path
+        d="M8 10.5V2.5M8 2.5 5 5.5M8 2.5l3 3M3 11v1.5A1.5 1.5 0 0 0 4.5 14h7a1.5 1.5 0 0 0 1.5-1.5V11"
+        stroke="currentColor"
+        strokeWidth="1.3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
   );
 }

@@ -11,10 +11,11 @@ interface PreviewCanvasProps {
 
 export function PreviewCanvas({ playback, meta, durationUs, onStepFrame }: PreviewCanvasProps) {
   const { canvasRef, isPlaying, currentTimeUs, lastError, play, pause, seek } = playback;
+  const progress = durationUs > 0 ? Math.min(currentTimeUs, durationUs) / durationUs : 0;
 
   return (
-    <div className="flex h-full flex-col bg-black">
-      <div className="relative flex flex-1 items-center justify-center overflow-hidden">
+    <div className="flex h-full flex-col bg-gray-100 p-4">
+      <div className="relative flex flex-1 items-center justify-center overflow-hidden rounded-lg bg-black shadow-card">
         <canvas
           ref={canvasRef}
           width={meta.widthPx}
@@ -23,51 +24,53 @@ export function PreviewCanvas({ playback, meta, durationUs, onStepFrame }: Previ
           style={{ aspectRatio: `${meta.widthPx} / ${meta.heightPx}` }}
         />
         {lastError && (
-          <div className="absolute bottom-2 left-2 right-2 rounded-md bg-red-950/90 px-3 py-2 text-xs text-red-300">
+          <div className="absolute bottom-3 left-3 right-3 rounded-md bg-red-50 px-3 py-2 text-xs text-red-700 shadow-card">
             {lastError}
           </div>
         )}
       </div>
 
-      <div className="flex shrink-0 flex-col gap-2 border-t border-neutral-800 bg-surface-900 px-4 py-2.5">
-        <input
-          type="range"
-          min={0}
-          max={Math.max(durationUs, 1)}
-          value={Math.min(currentTimeUs, durationUs)}
-          onChange={(event) => seek(Number(event.target.value))}
-          className="h-1 w-full cursor-pointer appearance-none rounded-full bg-neutral-800 accent-accent-500"
-        />
+      <div className="flex shrink-0 flex-col gap-2 pt-3">
+        <div className="group relative flex h-4 items-center">
+          <div className="h-1 w-full rounded-full bg-gray-300">
+            <div className="h-1 rounded-full bg-accent-500" style={{ width: `${progress * 100}%` }} />
+          </div>
+          <input
+            type="range"
+            min={0}
+            max={Math.max(durationUs, 1)}
+            value={Math.min(currentTimeUs, durationUs)}
+            onChange={(event) => seek(Number(event.target.value))}
+            aria-label="Seek"
+            className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+          />
+          <div
+            className="pointer-events-none absolute h-3 w-3 -translate-x-1/2 rounded-full bg-accent-500 opacity-0 shadow-toolbar transition-opacity group-hover:opacity-100"
+            style={{ left: `${progress * 100}%` }}
+          />
+        </div>
+
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
-            <button
-              type="button"
-              onClick={() => onStepFrame(-1)}
-              className="rounded p-1.5 text-neutral-400 hover:bg-neutral-800 hover:text-neutral-100"
-              aria-label="Previous frame"
-            >
+            <IconButton onClick={() => onStepFrame(-1)} label="Previous frame">
               <StepIcon direction="back" />
-            </button>
+            </IconButton>
             <button
               type="button"
               onClick={isPlaying ? pause : play}
-              className="rounded-md bg-accent-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-accent-500"
+              aria-label={isPlaying ? "Pause" : "Play"}
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-accent-500 text-white shadow-toolbar transition-colors hover:bg-accent-600"
             >
-              {isPlaying ? "Pause" : "Play"}
+              {isPlaying ? <PauseIcon /> : <PlayIcon />}
             </button>
-            <button
-              type="button"
-              onClick={() => onStepFrame(1)}
-              className="rounded p-1.5 text-neutral-400 hover:bg-neutral-800 hover:text-neutral-100"
-              aria-label="Next frame"
-            >
+            <IconButton onClick={() => onStepFrame(1)} label="Next frame">
               <StepIcon direction="forward" />
-            </button>
+            </IconButton>
           </div>
 
-          <span className="font-mono text-xs text-neutral-400">
+          <span className="font-mono text-xs tabular-nums text-gray-500">
             {formatTimecode(currentTimeUs, meta.frameRateNum, meta.frameRateDen)}
-            <span className="text-neutral-700"> / </span>
+            <span className="text-gray-300"> / </span>
             {formatTimecode(durationUs, meta.frameRateNum, meta.frameRateDen)}
           </span>
         </div>
@@ -76,11 +79,40 @@ export function PreviewCanvas({ playback, meta, durationUs, onStepFrame }: Previ
   );
 }
 
+function IconButton({ children, onClick, label }: { children: React.ReactNode; onClick: () => void; label: string }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      className="flex h-8 w-8 items-center justify-center rounded-full text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-800"
+    >
+      {children}
+    </button>
+  );
+}
+
 function StepIcon({ direction }: { direction: "back" | "forward" }) {
   const flip = direction === "back" ? "scale-x-[-1]" : "";
   return (
     <svg className={`h-3.5 w-3.5 ${flip}`} viewBox="0 0 16 16" fill="currentColor">
       <path d="M3 3h1.5v10H3V3zm3 5 8-5v10l-8-5z" />
+    </svg>
+  );
+}
+
+function PlayIcon() {
+  return (
+    <svg className="ml-0.5 h-4 w-4" viewBox="0 0 16 16" fill="currentColor">
+      <path d="M4 2.5v11l10-5.5-10-5.5Z" />
+    </svg>
+  );
+}
+
+function PauseIcon() {
+  return (
+    <svg className="h-4 w-4" viewBox="0 0 16 16" fill="currentColor">
+      <path d="M3.5 2.5h3v11h-3v-11Zm6 0h3v11h-3v-11Z" />
     </svg>
   );
 }
