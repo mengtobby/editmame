@@ -27,7 +27,6 @@ export interface PeerHandle {
   peerId: string;
   connection: RTCPeerConnectionLike;
   dataChannel: RTCDataChannel | null;
-  state: ConnectionState;
 }
 
 export interface PeerConnectionManagerEvents {
@@ -227,7 +226,7 @@ export class PeerConnectionManager {
     if (existing) return existing;
 
     const connection = this.createPeerConnection({ iceServers: this.iceServers });
-    const handle: PeerHandle = { peerId: remotePeerId, connection, dataChannel: null, state: "new" };
+    const handle: PeerHandle = { peerId: remotePeerId, connection, dataChannel: null };
     this.peers.set(remotePeerId, handle);
 
     connection.addEventListener("icecandidate", (event) => {
@@ -237,7 +236,6 @@ export class PeerConnectionManager {
 
     connection.addEventListener("connectionstatechange", () => {
       const state = connection.connectionState as ConnectionState;
-      handle.state = state;
       this.emitter.emit("peer-connection-state", { peerId: remotePeerId, state });
       if (state === "failed") void this.attemptIceRestart(handle);
     });
@@ -252,8 +250,11 @@ export class PeerConnectionManager {
   private async initiateOffer(handle: PeerHandle): Promise<void> {
     const channel = handle.connection.createDataChannel("editmame");
     this.wireDataChannel(handle, channel);
+    await this.createAndSendOffer(handle);
+  }
 
-    const offer = await handle.connection.createOffer();
+  private async createAndSendOffer(handle: PeerHandle, options?: RTCOfferOptions): Promise<void> {
+    const offer = await handle.connection.createOffer(options);
     await handle.connection.setLocalDescription(offer);
     if (offer.sdp) this.sendSignal(handle.peerId, { kind: "offer", sdp: offer.sdp });
   }
@@ -275,9 +276,7 @@ export class PeerConnectionManager {
 
   private async attemptIceRestart(handle: PeerHandle): Promise<void> {
     if (!this.isInitiatorFor(handle.peerId)) return;
-    const offer = await handle.connection.createOffer({ iceRestart: true });
-    await handle.connection.setLocalDescription(offer);
-    if (offer.sdp) this.sendSignal(handle.peerId, { kind: "offer", sdp: offer.sdp });
+    await this.createAndSendOffer(handle, { iceRestart: true });
   }
 
   private wireDataChannel(handle: PeerHandle, channel: RTCDataChannel): void {

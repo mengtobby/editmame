@@ -1,5 +1,6 @@
 import type { ClipRecord, TimelineEngine, TrackKind } from "@/types/timeline";
-import { MIN_CLIP_DURATION_US, pixelsToUs, usToPixels } from "./constants";
+import { MIN_CLIP_DURATION_US, usToPixels } from "./constants";
+import { startHorizontalDragUs } from "./drag";
 
 interface ClipBlockProps {
   clip: ClipRecord;
@@ -23,35 +24,23 @@ export function ClipBlock({ clip, trackKind, engine, isSelected, onSelect }: Cli
     event.stopPropagation();
     onSelect();
 
-    const startX = event.clientX;
     const initialStartUs = clip.startOnTimelineUs;
-
-    const onMove = (moveEvent: PointerEvent) => {
-      const deltaUs = pixelsToUs(moveEvent.clientX - startX);
+    startHorizontalDragUs(event, (deltaUs) => {
       engine.moveClip(clip.id, { startOnTimelineUs: Math.max(0, Math.round(initialStartUs + deltaUs)) });
-    };
-    const onUp = () => {
-      window.removeEventListener("pointermove", onMove);
-      window.removeEventListener("pointerup", onUp);
-    };
-    window.addEventListener("pointermove", onMove);
-    window.addEventListener("pointerup", onUp);
+    });
   };
 
   const handleTrimPointerDown = (edge: "left" | "right") => (event: React.PointerEvent) => {
     event.stopPropagation();
     onSelect();
 
-    const startX = event.clientX;
     const initial = {
       inPointUs: clip.inPointUs,
       outPointUs: clip.outPointUs,
       startOnTimelineUs: clip.startOnTimelineUs,
     };
 
-    const onMove = (moveEvent: PointerEvent) => {
-      const deltaUs = pixelsToUs(moveEvent.clientX - startX);
-
+    startHorizontalDragUs(event, (deltaUs) => {
       if (edge === "left") {
         const newIn = Math.min(
           Math.max(0, initial.inPointUs + deltaUs),
@@ -70,13 +59,7 @@ export function ClipBlock({ clip, trackKind, engine, isSelected, onSelect }: Cli
           durationUs: Math.round(newOut - initial.inPointUs),
         });
       }
-    };
-    const onUp = () => {
-      window.removeEventListener("pointermove", onMove);
-      window.removeEventListener("pointerup", onUp);
-    };
-    window.addEventListener("pointermove", onMove);
-    window.addEventListener("pointerup", onUp);
+    });
   };
 
   return (
