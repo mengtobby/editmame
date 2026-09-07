@@ -13,6 +13,10 @@ import { compareOrdered, keyBetween } from "./fractional-index";
 
 type YEntityMap = Y.Map<unknown>;
 
+function yMapToObject<T>(ymap: YEntityMap): T {
+  return Object.fromEntries(ymap.entries()) as T;
+}
+
 /**
  * Yjs-backed implementation of TimelineEngine.
  *
@@ -47,7 +51,7 @@ export class TimelineDoc implements TimelineEngine {
   // ---- meta ----
 
   getMeta(): ProjectMeta {
-    return Object.fromEntries(this.ymeta.entries()) as unknown as ProjectMeta;
+    return yMapToObject<ProjectMeta>(this.ymeta);
   }
 
   updateMeta(patch: Partial<Omit<ProjectMeta, "id">>): void {
@@ -153,7 +157,7 @@ export class TimelineDoc implements TimelineEngine {
 
   getClip(clipId: string): ClipRecord | undefined {
     const ymap = this.yclips.get(clipId);
-    return ymap ? (Object.fromEntries(ymap.entries()) as unknown as ClipRecord) : undefined;
+    return ymap ? yMapToObject<ClipRecord>(ymap) : undefined;
   }
 
   // ---- reads ----
@@ -161,13 +165,13 @@ export class TimelineDoc implements TimelineEngine {
   getTracksOrdered(): TrackWithClips[] {
     const tracks: TrackRecord[] = [];
     for (const ymap of this.ytracks.values()) {
-      tracks.push(Object.fromEntries(ymap.entries()) as unknown as TrackRecord);
+      tracks.push(yMapToObject<TrackRecord>(ymap));
     }
     tracks.sort(compareOrdered);
 
     const clipsByTrack = new Map<string, ClipRecord[]>();
     for (const ymap of this.yclips.values()) {
-      const clip = Object.fromEntries(ymap.entries()) as unknown as ClipRecord;
+      const clip = yMapToObject<ClipRecord>(ymap);
       const bucket = clipsByTrack.get(clip.trackId);
       if (bucket) bucket.push(clip);
       else clipsByTrack.set(clip.trackId, [clip]);
@@ -193,11 +197,11 @@ export class TimelineDoc implements TimelineEngine {
   toJSON(): TimelineDocShape {
     const tracks: Record<string, TrackRecord> = {};
     for (const [id, ymap] of this.ytracks.entries()) {
-      tracks[id] = Object.fromEntries(ymap.entries()) as unknown as TrackRecord;
+      tracks[id] = yMapToObject<TrackRecord>(ymap);
     }
     const clips: Record<string, ClipRecord> = {};
     for (const [id, ymap] of this.yclips.entries()) {
-      clips[id] = Object.fromEntries(ymap.entries()) as unknown as ClipRecord;
+      clips[id] = yMapToObject<ClipRecord>(ymap);
     }
     return { meta: this.getMeta(), tracks, clips };
   }

@@ -9,9 +9,6 @@ export interface PeerInfo {
   displayName: string;
   /** Deterministic per-peer color for cursors/presence, derived from peerId. */
   color: string;
-  connectionState: RTCPeerConnectionState;
-  dataChannelState: RTCDataChannelState | "unavailable";
-  joinedAtMs: number;
 }
 
 export interface ThroughputSample {
@@ -29,11 +26,3 @@ export interface ChunkExchangeEvent {
   timestampMs: number;
 }
 
-export interface NetworkTopologySnapshot {
-  selfPeerId: string;
-  roomId: string;
-  peers: PeerInfo[];
-  throughput: ThroughputSample[];
-  /** Most recent exchanges first, capped to a fixed window by the producer. */
-  recentExchanges: ChunkExchangeEvent[];
-}

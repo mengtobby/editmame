@@ -74,9 +74,6 @@ export function useNetworkTopology(
     peerId,
     displayName: peerId.slice(0, 8),
     color: colorFor(peerId),
-    connectionState: "connected",
-    dataChannelState: "open",
-    joinedAtMs: 0,
   }));
 
   return { peers, throughput, recentExchanges };
