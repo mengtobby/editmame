@@ -61,28 +61,34 @@ export function usePlaybackWorker(): PlaybackWorkerApi {
     };
   }, []);
 
-  const play = useCallback(() => {
-    workerRef.current?.postMessage({ type: "play" } satisfies MainToWorkerMessage);
-    setIsPlaying(true);
+  const postMessage = useCallback((message: MainToWorkerMessage, transfer: Transferable[] = []) => {
+    workerRef.current?.postMessage(message, transfer);
   }, []);
+
+  const play = useCallback(() => {
+    postMessage({ type: "play" });
+    setIsPlaying(true);
+  }, [postMessage]);
 
   const pause = useCallback(() => {
-    workerRef.current?.postMessage({ type: "pause" } satisfies MainToWorkerMessage);
+    postMessage({ type: "pause" });
     setIsPlaying(false);
-  }, []);
+  }, [postMessage]);
 
-  const seek = useCallback((mediaTimeUs: number) => {
-    workerRef.current?.postMessage({ type: "seek", mediaTimeUs } satisfies MainToWorkerMessage);
-    setCurrentTimeUs(mediaTimeUs);
-  }, []);
+  const seek = useCallback(
+    (mediaTimeUs: number) => {
+      postMessage({ type: "seek", mediaTimeUs });
+      setCurrentTimeUs(mediaTimeUs);
+    },
+    [postMessage],
+  );
 
-  const setClips = useCallback((clips: RenderableClip[]) => {
-    workerRef.current?.postMessage({ type: "set-clips", clips } satisfies MainToWorkerMessage);
-  }, []);
+  const setClips = useCallback((clips: RenderableClip[]) => postMessage({ type: "set-clips", clips }), [postMessage]);
 
-  const loadSource = useCallback((assetHash: string, data: ArrayBuffer) => {
-    workerRef.current?.postMessage({ type: "load-source", assetHash, data } satisfies MainToWorkerMessage, [data]);
-  }, []);
+  const loadSource = useCallback(
+    (assetHash: string, data: ArrayBuffer) => postMessage({ type: "load-source", assetHash, data }, [data]),
+    [postMessage],
+  );
 
   return { canvasRef, isPlaying, currentTimeUs, lastError, play, pause, seek, setClips, loadSource };
 }
