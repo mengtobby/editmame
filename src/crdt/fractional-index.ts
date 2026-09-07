@@ -1,4 +1,4 @@
-import { generateKeyBetween, generateNKeysBetween } from "fractional-indexing";
+import { generateKeyBetween } from "fractional-indexing";
 import type { FractionalIndex } from "@/types/timeline";
 
 /**
@@ -11,14 +11,6 @@ export function keyBetween(
   after: FractionalIndex | null | undefined,
 ): FractionalIndex {
   return generateKeyBetween(before ?? null, after ?? null);
-}
-
-export function keysBetween(
-  before: FractionalIndex | null | undefined,
-  after: FractionalIndex | null | undefined,
-  count: number,
-): FractionalIndex[] {
-  return generateNKeysBetween(before ?? null, after ?? null, count);
 }
 
 /** Sorts by `order` field, breaking ties by `id` so concurrent inserts at the same key still

@@ -8,7 +8,6 @@
  */
 
 export const CHUNK_SIZE_BYTES = 1024 * 1024; // 1 MiB
-export const SWARM_PROTOCOL_VERSION = 1;
 
 /** Hex-encoded BLAKE3 digest (32 bytes -> 64 hex chars). */
 export type Blake3Hex = string;
