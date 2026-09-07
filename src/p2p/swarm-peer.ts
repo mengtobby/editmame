@@ -58,7 +58,7 @@ export class SwarmPeer {
   async announceLocalAsset(manifest: AssetManifest): Promise<void> {
     this.manifests.set(manifest.assetHash, manifest);
     this.manager.broadcast(encodeSwarmMessage({ type: SwarmMessageType.ManifestAnnounce, manifest }));
-    await this.broadcastLocalBitfield(manifest.assetHash);
+    await this.publishLocalBitfield(manifest.assetHash);
   }
 
   /** Requests every chunk of `assetHash` this peer doesn't already have, from whichever
@@ -90,27 +90,22 @@ export class SwarmPeer {
     this.scheduler.schedule(candidates);
   }
 
-  private async broadcastLocalBitfield(assetHash: Blake3Hex): Promise<void> {
+  /** Sends a fresh local bitfield for `assetHash` to one peer, or broadcasts it to everyone when
+   *  `targetPeerId` is omitted. */
+  private async publishLocalBitfield(assetHash: Blake3Hex, targetPeerId?: string): Promise<void> {
     const manifest = this.manifests.get(assetHash);
     if (!manifest) return;
     const bitfield = await this.store.getBitfield(assetHash, manifest.chunkCount);
-    this.manager.broadcast(
-      encodeSwarmMessage({ type: SwarmMessageType.BitfieldUpdate, assetHash, bits: bitfield.bits }),
-    );
+    const message = encodeSwarmMessage({ type: SwarmMessageType.BitfieldUpdate, assetHash, bits: bitfield.bits });
+    if (targetPeerId) this.manager.send(targetPeerId, message);
+    else this.manager.broadcast(message);
   }
 
   private handlePeerConnected(peerId: string): void {
     for (const manifest of this.manifests.values()) {
       this.manager.send(peerId, encodeSwarmMessage({ type: SwarmMessageType.ManifestAnnounce, manifest }));
-      void this.sendLocalBitfieldTo(peerId, manifest.assetHash);
+      void this.publishLocalBitfield(manifest.assetHash, peerId);
     }
-  }
-
-  private async sendLocalBitfieldTo(peerId: string, assetHash: Blake3Hex): Promise<void> {
-    const manifest = this.manifests.get(assetHash);
-    if (!manifest) return;
-    const bitfield = await this.store.getBitfield(assetHash, manifest.chunkCount);
-    this.manager.send(peerId, encodeSwarmMessage({ type: SwarmMessageType.BitfieldUpdate, assetHash, bits: bitfield.bits }));
   }
 
   private handleMessage(peerId: string, data: string | ArrayBuffer): void {
@@ -135,14 +130,11 @@ export class SwarmPeer {
       case SwarmMessageType.Have: {
         const manifest = this.manifests.get(message.assetHash);
         if (!manifest) break;
-        let byPeer = this.remoteBitfields.get(message.assetHash);
-        if (!byPeer) {
-          byPeer = new Map();
-          this.remoteBitfields.set(message.assetHash, byPeer);
-        }
-        const bitfield = byPeer.get(peerId) ?? createEmptyBitfield(message.assetHash, manifest.chunkCount);
+        const bitfield =
+          this.remoteBitfields.get(message.assetHash)?.get(peerId) ??
+          createEmptyBitfield(message.assetHash, manifest.chunkCount);
         setChunk(bitfield, message.chunkIndex);
-        byPeer.set(peerId, bitfield);
+        this.recordRemoteBitfield(peerId, message.assetHash, bitfield);
         void this.requestMissingChunks(message.assetHash);
         break;
       }
