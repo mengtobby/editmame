@@ -15,7 +15,7 @@ editor" who owns the project file and has to export/send it around.
 
 ## Product Purpose
 
-LoomP2P is a browser-based, peer-to-peer collaborative non-linear video editor. Multiple people
+Editmame is a browser-based, peer-to-peer collaborative non-linear video editor. Multiple people
 join a shared session, each imports their own local footage, and everyone edits one shared
 multi-track timeline together in real time. Success is a session where editing feels as
 synchronous and lightweight as editing a Google Doc together, but for video.

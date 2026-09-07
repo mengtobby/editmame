@@ -1,5 +1,5 @@
 ---
-name: LoomP2P
+name: Editmame
 description: A Google Docs-style visual system for a peer-to-peer collaborative video editor — white surfaces, hairline borders, and one blue accent, so editing together feels as approachable as a shared document.
 colors:
   ink: "#111827"
@@ -63,7 +63,7 @@ components:
 
 ## Overview
 
-LoomP2P looks like the document app its product mechanism claims to be: a peer-to-peer,
+Editmame looks like the document app its product mechanism claims to be: a peer-to-peer,
 local-first video editor that wants editing together to feel as low-friction as editing a Google
 Doc together. The visual system is borrowed directly from Google Docs' own chrome — white
 surfaces floating on a light-gray shell, hairline gray borders instead of heavy panels, one

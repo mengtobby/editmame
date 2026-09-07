@@ -138,7 +138,7 @@ export function startSignalingServer(port = PORT): WebSocketServer {
 
   wss.on("close", () => clearInterval(heartbeat));
 
-  process.stdout.write(`[loomp2p] signaling server listening on ws://localhost:${port}\n`);
+  process.stdout.write(`[editmame] signaling server listening on ws://localhost:${port}\n`);
   return wss;
 }
 

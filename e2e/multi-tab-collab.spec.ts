@@ -11,14 +11,14 @@ test("two peers in the same room connect to each other over WebRTC", async ({ br
   const pageA = await contextA.newPage();
 
   await pageA.goto("/");
-  await expect(pageA.getByTitle("LoomP2P")).toBeVisible();
+  await expect(pageA.getByTitle("Editmame")).toBeVisible();
 
   const roomUrl = pageA.url();
 
   const contextB = await browser.newContext();
   const pageB = await contextB.newPage();
   await pageB.goto(roomUrl);
-  await expect(pageB.getByTitle("LoomP2P")).toBeVisible();
+  await expect(pageB.getByTitle("Editmame")).toBeVisible();
 
   await expect(pageA.getByTestId("connection-status")).toHaveText("Connected", { timeout: 15_000 });
   await expect(pageA.locator("header").getByTestId("peer-avatar")).toHaveCount(2, { timeout: 15_000 }); // you + the other peer

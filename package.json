@@ -1,8 +1,8 @@
 {
-  "name": "loomp2p",
+  "name": "editmame",
   "private": true,
   "version": "0.1.0",
-  "description": "LoomP2P — local-first, peer-to-peer collaborative non-linear video editor",
+  "description": "Editmame — local-first, peer-to-peer collaborative non-linear video editor",
   "type": "module",
   "scripts": {
     "dev": "vite",

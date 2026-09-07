@@ -250,7 +250,7 @@ export class PeerConnectionManager {
   }
 
   private async initiateOffer(handle: PeerHandle): Promise<void> {
-    const channel = handle.connection.createDataChannel("loomp2p");
+    const channel = handle.connection.createDataChannel("editmame");
     this.wireDataChannel(handle, channel);
 
     const offer = await handle.connection.createOffer();

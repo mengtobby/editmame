@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-// LoomP2P requires cross-origin isolation for SharedArrayBuffer /
+// Editmame requires cross-origin isolation for SharedArrayBuffer /
 // high-precision timers used by the WebCodecs + OPFS pipeline.
 export default defineConfig({
   plugins: [react()],
