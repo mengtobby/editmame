@@ -20,7 +20,7 @@ typography:
     fontFamily: "Roboto, ui-sans-serif, system-ui, sans-serif"
     fontSize: "14px"
     fontWeight: 400
-    lineHeight: 1.41
+    lineHeight: 1.4
   title:
     fontFamily: "Roboto, ui-sans-serif, system-ui, sans-serif"
     fontSize: "16px"
