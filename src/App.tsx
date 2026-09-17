@@ -40,6 +40,29 @@ function App() {
     playback.seek(stepFrameTimeUs(playback.currentTimeUs, room.meta.frameRateNum, room.meta.frameRateDen, direction));
   };
 
+  const deleteClip = (clipId: string) => {
+    room.engine.removeClip(clipId);
+    setSelectedClipId((current) => (current === clipId ? null : current));
+  };
+
+  useEffect(() => {
+    const isEditableTarget = (target: EventTarget | null) => {
+      if (!(target instanceof HTMLElement)) return false;
+      return target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable;
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!selectedClipId || isEditableTarget(event.target)) return;
+      if (event.key === "Delete" || event.key === "Backspace") {
+        event.preventDefault();
+        deleteClip(selectedClipId);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedClipId, room.engine]);
+
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const dragDepth = useRef(0);
 
@@ -130,6 +153,7 @@ function App() {
               onSeek={playback.seek}
               selectedClipId={selectedClipId}
               onSelectClip={setSelectedClipId}
+              onDeleteClip={deleteClip}
               mediaImport={mediaImport}
             />
           </div>

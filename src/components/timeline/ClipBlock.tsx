@@ -8,6 +8,7 @@ interface ClipBlockProps {
   engine: TimelineEngine;
   isSelected: boolean;
   onSelect: () => void;
+  onDelete: () => void;
 }
 
 const CLIP_COLOR: Record<TrackKind, string> = {
@@ -15,7 +16,7 @@ const CLIP_COLOR: Record<TrackKind, string> = {
   audio: "bg-clip-audio",
 };
 
-export function ClipBlock({ clip, trackKind, engine, isSelected, onSelect }: ClipBlockProps) {
+export function ClipBlock({ clip, trackKind, engine, isSelected, onSelect, onDelete }: ClipBlockProps) {
   const left = usToPixels(clip.startOnTimelineUs);
   const width = Math.max(6, usToPixels(clip.durationUs));
 
@@ -65,6 +66,7 @@ export function ClipBlock({ clip, trackKind, engine, isSelected, onSelect }: Cli
   return (
     <div
       onPointerDown={handleMovePointerDown}
+      title={clip.label ?? clip.assetHash}
       className={`absolute bottom-1 top-1 select-none overflow-hidden rounded ${CLIP_COLOR[trackKind]} shadow-sm active:cursor-grabbing ${
         isSelected ? "ring-2 ring-accent-500 ring-offset-1" : ""
       }`}
@@ -81,6 +83,23 @@ export function ClipBlock({ clip, trackKind, engine, isSelected, onSelect }: Cli
         onPointerDown={handleTrimPointerDown("right")}
         className="absolute inset-y-0 right-0 w-1.5 cursor-ew-resize hover:bg-white/40"
       />
+      {isSelected && (
+        <button
+          type="button"
+          onPointerDown={(event) => event.stopPropagation()}
+          onClick={(event) => {
+            event.stopPropagation();
+            onDelete();
+          }}
+          title="Delete clip"
+          aria-label="Delete clip"
+          className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-black/40 text-white transition-colors hover:bg-black/70"
+        >
+          <svg viewBox="0 0 10 10" fill="none" className="h-2.5 w-2.5">
+            <path d="M2 2l6 6M8 2 2 8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+          </svg>
+        </button>
+      )}
     </div>
   );
 }

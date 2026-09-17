@@ -9,10 +9,20 @@ interface TrackRowProps {
   engine: TimelineEngine;
   selectedClipId: string | null;
   onSelectClip: (clipId: string) => void;
+  onDeleteClip: (clipId: string) => void;
   widthPx: number;
 }
 
-export function TrackRow({ track, index, allTracks, engine, selectedClipId, onSelectClip, widthPx }: TrackRowProps) {
+export function TrackRow({
+  track,
+  index,
+  allTracks,
+  engine,
+  selectedClipId,
+  onSelectClip,
+  onDeleteClip,
+  widthPx,
+}: TrackRowProps) {
   const isFirst = index === 0;
   const isLast = index === allTracks.length - 1;
 
@@ -73,6 +83,7 @@ export function TrackRow({ track, index, allTracks, engine, selectedClipId, onSe
             engine={engine}
             isSelected={selectedClipId === clip.id}
             onSelect={() => onSelectClip(clip.id)}
+            onDelete={() => onDeleteClip(clip.id)}
           />
         ))}
       </div>

@@ -12,6 +12,7 @@ interface TimelineProps {
   onSeek: (mediaTimeUs: number) => void;
   selectedClipId: string | null;
   onSelectClip: (clipId: string | null) => void;
+  onDeleteClip: (clipId: string) => void;
   mediaImport: MediaImportApi;
 }
 
@@ -23,6 +24,7 @@ export function Timeline({
   onSeek,
   selectedClipId,
   onSelectClip,
+  onDeleteClip,
   mediaImport,
 }: TimelineProps) {
   const laneWidthPx = (durationUs / 1_000_000) * PIXELS_PER_SECOND;
@@ -59,6 +61,7 @@ export function Timeline({
             engine={engine}
             selectedClipId={selectedClipId}
             onSelectClip={onSelectClip}
+            onDeleteClip={onDeleteClip}
             widthPx={laneWidthPx}
           />
         ))}
