@@ -52,16 +52,30 @@ function App() {
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (!selectedClipId || isEditableTarget(event.target)) return;
-      if (event.key === "Delete" || event.key === "Backspace") {
+      if (isEditableTarget(event.target)) return;
+
+      if (selectedClipId && (event.key === "Delete" || event.key === "Backspace")) {
         event.preventDefault();
         deleteClip(selectedClipId);
+        return;
+      }
+
+      if (event.key === " ") {
+        event.preventDefault();
+        if (playback.isPlaying) playback.pause();
+        else playback.play();
+        return;
+      }
+
+      if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+        event.preventDefault();
+        handleStepFrame(event.key === "ArrowLeft" ? -1 : 1);
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedClipId, room.engine]);
+  }, [selectedClipId, room.engine, playback, room.meta.frameRateNum, room.meta.frameRateDen]);
 
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const dragDepth = useRef(0);
