@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { TimelineEngine, TrackWithClips } from "@/types/timeline";
 import { ClipBlock } from "./ClipBlock";
 import { TRACK_HEADER_WIDTH, TRACK_HEIGHT } from "./constants";
@@ -25,6 +26,19 @@ export function TrackRow({
 }: TrackRowProps) {
   const isFirst = index === 0;
   const isLast = index === allTracks.length - 1;
+  const [isRenaming, setIsRenaming] = useState(false);
+  const [draftName, setDraftName] = useState(track.name);
+
+  const startRenaming = () => {
+    setDraftName(track.name);
+    setIsRenaming(true);
+  };
+
+  const commitRename = () => {
+    const trimmed = draftName.trim();
+    if (trimmed && trimmed !== track.name) engine.updateTrack(track.id, { name: trimmed });
+    setIsRenaming(false);
+  };
 
   const moveUp = () => {
     if (isFirst) return;
@@ -45,7 +59,28 @@ export function TrackRow({
         style={{ width: TRACK_HEADER_WIDTH, height: TRACK_HEIGHT }}
       >
         <div className="flex items-center justify-between">
-          <span className="truncate text-xs font-medium text-gray-700">{track.name}</span>
+          {isRenaming ? (
+            <input
+              autoFocus
+              value={draftName}
+              onChange={(event) => setDraftName(event.target.value)}
+              onBlur={commitRename}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") commitRename();
+                if (event.key === "Escape") setIsRenaming(false);
+              }}
+              aria-label="Track name"
+              className="min-w-0 flex-1 rounded border border-accent-500 px-1 text-xs font-medium text-gray-700 outline-none"
+            />
+          ) : (
+            <span
+              onDoubleClick={startRenaming}
+              title="Double-click to rename"
+              className="truncate text-xs font-medium text-gray-700"
+            >
+              {track.name}
+            </span>
+          )}
           <div className="flex gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
             <button
               type="button"
