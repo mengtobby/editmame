@@ -53,6 +53,7 @@ export function TrackRow({
               disabled={isFirst}
               className="rounded px-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-700 disabled:opacity-0"
               aria-label="Move track up"
+              title="Move track up"
             >
               ▲
             </button>
@@ -62,15 +63,31 @@ export function TrackRow({
               disabled={isLast}
               className="rounded px-1 text-[10px] text-gray-400 hover:bg-gray-100 hover:text-gray-700 disabled:opacity-0"
               aria-label="Move track down"
+              title="Move track down"
             >
               ▼
             </button>
           </div>
         </div>
         <div className="flex gap-1">
-          <TrackToggle label="M" active={track.muted} onClick={() => engine.updateTrack(track.id, { muted: !track.muted })} />
-          <TrackToggle label="L" active={track.locked} onClick={() => engine.updateTrack(track.id, { locked: !track.locked })} />
-          <TrackToggle label="H" active={track.hidden} onClick={() => engine.updateTrack(track.id, { hidden: !track.hidden })} />
+          <TrackToggle
+            label="M"
+            title="Mute track"
+            active={track.muted}
+            onClick={() => engine.updateTrack(track.id, { muted: !track.muted })}
+          />
+          <TrackToggle
+            label="L"
+            title="Lock track"
+            active={track.locked}
+            onClick={() => engine.updateTrack(track.id, { locked: !track.locked })}
+          />
+          <TrackToggle
+            label="H"
+            title="Hide track"
+            active={track.hidden}
+            onClick={() => engine.updateTrack(track.id, { hidden: !track.hidden })}
+          />
         </div>
       </div>
 
@@ -91,11 +108,23 @@ export function TrackRow({
   );
 }
 
-function TrackToggle({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+function TrackToggle({
+  label,
+  title,
+  active,
+  onClick,
+}: {
+  label: string;
+  title: string;
+  active: boolean;
+  onClick: () => void;
+}) {
   return (
     <button
       type="button"
       onClick={onClick}
+      title={title}
+      aria-label={title}
       className={`h-4 w-4 rounded text-[9px] font-semibold leading-4 transition-colors ${
         active ? "bg-accent-500 text-white" : "bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-600"
       }`}

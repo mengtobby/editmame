@@ -52,18 +52,19 @@ export function PreviewCanvas({ playback, meta, durationUs, onStepFrame }: Previ
 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
-            <IconButton onClick={() => onStepFrame(-1)} label="Previous frame">
+            <IconButton onClick={() => onStepFrame(-1)} label="Previous frame (←)">
               <StepIcon direction="back" />
             </IconButton>
             <button
               type="button"
               onClick={isPlaying ? pause : play}
               aria-label={isPlaying ? "Pause" : "Play"}
+              title={`${isPlaying ? "Pause" : "Play"} (Space)`}
               className="flex h-9 w-9 items-center justify-center rounded-full bg-accent-500 text-white shadow-toolbar transition-colors hover:bg-accent-600"
             >
               {isPlaying ? <PauseIcon /> : <PlayIcon />}
             </button>
-            <IconButton onClick={() => onStepFrame(1)} label="Next frame">
+            <IconButton onClick={() => onStepFrame(1)} label="Next frame (→)">
               <StepIcon direction="forward" />
             </IconButton>
           </div>
@@ -85,6 +86,7 @@ function IconButton({ children, onClick, label }: { children: React.ReactNode; o
       type="button"
       onClick={onClick}
       aria-label={label}
+      title={label}
       className="flex h-8 w-8 items-center justify-center rounded-full text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-800"
     >
       {children}

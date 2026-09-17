@@ -70,6 +70,7 @@ export function TopBar({ roomId, peerId, projectName, onRenameProject, peers, si
           }}
           size={Math.max(draftName.length, 4)}
           aria-label="Project name"
+          title="Rename project"
           className="-mx-1.5 max-w-[40vw] truncate rounded px-1.5 py-0.5 text-base font-medium text-gray-900 hover:bg-gray-100 focus:bg-white focus:outline focus:outline-2 focus:outline-accent-500"
         />
         <span data-testid="connection-status" className={`px-1.5 text-xs ${STATUS_TONE[signalingState]}`}>
@@ -92,6 +93,7 @@ export function TopBar({ roomId, peerId, projectName, onRenameProject, peers, si
       <button
         type="button"
         onClick={onNewRoom}
+        title="Start a new, empty session"
         className="rounded-full px-3 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-100"
       >
         New room
@@ -99,6 +101,7 @@ export function TopBar({ roomId, peerId, projectName, onRenameProject, peers, si
       <button
         type="button"
         onClick={handleShare}
+        title="Copy this session's link to invite collaborators"
         className="flex items-center gap-1.5 rounded-full bg-accent-500 px-4 py-1.5 text-sm font-medium text-white shadow-toolbar transition-colors hover:bg-accent-600"
       >
         <ShareIcon />
