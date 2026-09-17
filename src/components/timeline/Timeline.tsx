@@ -1,3 +1,4 @@
+import type { MediaImportApi } from "@/hooks/useMediaImport";
 import type { TimelineEngine, TrackWithClips } from "@/types/timeline";
 import { TimelineRuler } from "./TimelineRuler";
 import { TrackRow } from "./TrackRow";
@@ -11,9 +12,19 @@ interface TimelineProps {
   onSeek: (mediaTimeUs: number) => void;
   selectedClipId: string | null;
   onSelectClip: (clipId: string | null) => void;
+  mediaImport: MediaImportApi;
 }
 
-export function Timeline({ engine, tracks, durationUs, currentTimeUs, onSeek, selectedClipId, onSelectClip }: TimelineProps) {
+export function Timeline({
+  engine,
+  tracks,
+  durationUs,
+  currentTimeUs,
+  onSeek,
+  selectedClipId,
+  onSelectClip,
+  mediaImport,
+}: TimelineProps) {
   const laneWidthPx = (durationUs / 1_000_000) * PIXELS_PER_SECOND;
   const playheadLeft = TRACK_HEADER_WIDTH + (currentTimeUs / 1_000_000) * PIXELS_PER_SECOND;
 
@@ -26,9 +37,17 @@ export function Timeline({ engine, tracks, durationUs, currentTimeUs, onSeek, se
         </div>
 
         {tracks.length === 0 && (
-          <p className="px-4 py-8 text-sm text-gray-400">
-            No tracks yet — import a video or add a track to get started.
-          </p>
+          <div className="flex flex-col items-start gap-2 px-4 py-8">
+            <p className="text-sm text-gray-400">No tracks yet.</p>
+            <button
+              type="button"
+              onClick={mediaImport.triggerPicker}
+              disabled={mediaImport.busy}
+              className="rounded-full bg-accent-500 px-4 py-1.5 text-sm font-medium text-white shadow-toolbar transition-colors hover:bg-accent-600 disabled:pointer-events-none disabled:opacity-50"
+            >
+              {mediaImport.busy ? "Importing…" : "Import a video to get started"}
+            </button>
+          </div>
         )}
 
         {tracks.map((track, index) => (

@@ -130,6 +130,7 @@ function App() {
               onSeek={playback.seek}
               selectedClipId={selectedClipId}
               onSelectClip={setSelectedClipId}
+              mediaImport={mediaImport}
             />
           </div>
         </div>
