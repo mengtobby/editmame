@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ImportButton } from "@/components/ImportButton";
 import { NetworkPanel } from "@/components/NetworkPanel";
 import { PreviewCanvas } from "@/components/PreviewCanvas";
@@ -40,6 +40,34 @@ function App() {
     playback.seek(stepFrameTimeUs(playback.currentTimeUs, room.meta.frameRateNum, room.meta.frameRateDen, direction));
   };
 
+  const [isDraggingFile, setIsDraggingFile] = useState(false);
+  const dragDepth = useRef(0);
+
+  const handleDragEnter = (event: React.DragEvent) => {
+    if (!event.dataTransfer.types.includes("Files")) return;
+    event.preventDefault();
+    dragDepth.current += 1;
+    setIsDraggingFile(true);
+  };
+
+  const handleDragOver = (event: React.DragEvent) => {
+    if (!event.dataTransfer.types.includes("Files")) return;
+    event.preventDefault();
+  };
+
+  const handleDragLeave = () => {
+    dragDepth.current = Math.max(0, dragDepth.current - 1);
+    if (dragDepth.current === 0) setIsDraggingFile(false);
+  };
+
+  const handleDrop = (event: React.DragEvent) => {
+    event.preventDefault();
+    dragDepth.current = 0;
+    setIsDraggingFile(false);
+    const file = Array.from(event.dataTransfer.files).find((f) => f.type.startsWith("video/"));
+    if (file) void mediaImport.importFile(file);
+  };
+
   const addTrack = (kind: "video" | "audio") => {
     room.engine.addTrack({
       id: crypto.randomUUID(),
@@ -65,7 +93,19 @@ function App() {
       />
 
       <div className="flex min-h-0 flex-1">
-        <div className="flex min-w-0 flex-1 flex-col">
+        <div
+          className="relative flex min-w-0 flex-1 flex-col"
+          onDragEnter={handleDragEnter}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
+          {isDraggingFile && (
+            <div className="pointer-events-none absolute inset-2 z-20 flex items-center justify-center rounded-lg border-2 border-dashed border-accent-500 bg-accent-50/80">
+              <p className="text-sm font-medium text-accent-700">Drop video to import</p>
+            </div>
+          )}
+
           <div className="h-[42%] min-h-[220px]">
             <PreviewCanvas playback={playback} meta={room.meta} durationUs={durationUs} onStepFrame={handleStepFrame} />
           </div>
