@@ -6,6 +6,7 @@ import { Timeline } from "@/components/timeline/Timeline";
 import { ToolbarButton } from "@/components/ToolbarButton";
 import { TopBar } from "@/components/TopBar";
 import { useCollabRoom } from "@/hooks/useCollabRoom";
+import { useMediaImport } from "@/hooks/useMediaImport";
 import { useNetworkTopology } from "@/hooks/useNetworkTopology";
 import { usePlaybackWorker } from "@/hooks/usePlaybackWorker";
 import { computeVisibleClips } from "@/playback/visible-clips";
@@ -18,6 +19,13 @@ function App() {
   const playback = usePlaybackWorker();
   const topology = useNetworkTopology(room.manager, room.swarm, room.connectedPeerIds);
   const [selectedClipId, setSelectedClipId] = useState<string | null>(null);
+  const mediaImport = useMediaImport({
+    engine: room.engine,
+    chunkStore: room.chunkStore,
+    swarm: room.swarm,
+    tracks: room.tracks,
+    playheadUs: playback.currentTimeUs,
+  });
 
   const durationUs = useMemo(() => {
     const clipEnds = room.tracks.flatMap((track) => track.clips.map((clip) => clip.startOnTimelineUs + clip.durationUs));
@@ -63,13 +71,7 @@ function App() {
           </div>
 
           <div className="flex items-center gap-1 overflow-x-auto whitespace-nowrap border-b border-gray-200 bg-white px-3 py-1.5 scrollbar-thin">
-            <ImportButton
-              engine={room.engine}
-              chunkStore={room.chunkStore}
-              swarm={room.swarm}
-              tracks={room.tracks}
-              playheadUs={playback.currentTimeUs}
-            />
+            <ImportButton mediaImport={mediaImport} />
             <span className="mx-1 h-5 w-px bg-gray-200" />
             <ToolbarButton onClick={() => addTrack("video")} icon={<VideoTrackIcon />}>
               Video track

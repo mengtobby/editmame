@@ -1,79 +1,26 @@
-import { useRef, useState } from "react";
-import { importMediaFile } from "@/media/import-media";
-import type { SwarmPeer } from "@/p2p/swarm-peer";
-import type { ChunkStore } from "@/storage/chunk-store";
-import type { TimelineEngine, TrackWithClips } from "@/types/timeline";
+import type { MediaImportApi } from "@/hooks/useMediaImport";
 
 interface ImportButtonProps {
-  engine: TimelineEngine;
-  chunkStore: ChunkStore;
-  swarm: SwarmPeer | null;
-  tracks: TrackWithClips[];
-  playheadUs: number;
+  mediaImport: MediaImportApi;
 }
 
-export function ImportButton({ engine, chunkStore, swarm, tracks, playheadUs }: ImportButtonProps) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [busy, setBusy] = useState(false);
-
-  const handleFiles = async (files: FileList | null) => {
-    const file = files?.[0];
-    if (!file) return;
-
-    setBusy(true);
-    try {
-      const imported = await importMediaFile(file, chunkStore);
-
-      let videoTrack = tracks.find((t) => t.kind === "video");
-      if (!videoTrack) {
-        const created = engine.addTrack({
-          id: crypto.randomUUID(),
-          kind: "video",
-          name: "V1",
-          muted: false,
-          locked: false,
-          hidden: false,
-          zIndex: tracks.length,
-        });
-        videoTrack = { ...created, clips: [] };
-      }
-
-      engine.addClip({
-        id: crypto.randomUUID(),
-        trackId: videoTrack.id,
-        assetHash: imported.manifest.assetHash,
-        inPointUs: 0,
-        outPointUs: imported.durationUs,
-        startOnTimelineUs: playheadUs,
-        durationUs: imported.durationUs,
-        label: file.name,
-      });
-
-      if (swarm) await swarm.announceLocalAsset(imported.manifest);
-    } finally {
-      setBusy(false);
-      if (inputRef.current) inputRef.current.value = "";
-    }
-  };
+export function ImportButton({ mediaImport }: ImportButtonProps) {
+  const { busy, inputRef, triggerPicker, handleInputChange } = mediaImport;
 
   return (
-    <label
-      className={`flex cursor-pointer items-center gap-1.5 rounded px-2.5 py-1.5 text-sm text-gray-700 transition-colors hover:bg-gray-100 ${
-        busy ? "pointer-events-none opacity-50" : ""
-      }`}
+    <button
+      type="button"
+      onClick={triggerPicker}
+      disabled={busy}
+      title="Import media from your device"
+      className="flex cursor-pointer items-center gap-1.5 rounded px-2.5 py-1.5 text-sm text-gray-700 transition-colors hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-50"
     >
       <span className="text-gray-500">
         <UploadIcon />
       </span>
       {busy ? "Importing…" : "Import media"}
-      <input
-        ref={inputRef}
-        type="file"
-        accept="video/*"
-        className="hidden"
-        onChange={(event) => void handleFiles(event.target.files)}
-      />
-    </label>
+      <input ref={inputRef} type="file" accept="video/*" className="hidden" onChange={handleInputChange} />
+    </button>
   );
 }
 
